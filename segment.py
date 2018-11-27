@@ -11,7 +11,7 @@ this_dir = Path(__file__).parent
 config_template_path = this_dir / 'config_template.ini'
 
 @click.command()
-@click.argument('input_path', type=click.Path(exists=True),)
+@click.argument('input_path', type=click.Path(exists=True))
 @click.argument('output_path', type=click.Path())
 @click.option('--cleanup', default=False)
 @click.option('--verbose', default=True)
