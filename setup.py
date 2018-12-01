@@ -12,6 +12,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        vesseg=segment:main
+        vesseg=vesseg.segment:main
     ''',
 )
