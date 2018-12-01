@@ -10,8 +10,9 @@ setup(
         'tensorflow-gpu',
         'niftynet',
     ],
-    entry_points='''
-        [console_scripts]
-        vesseg=vesseg.segment:main
-    ''',
+    entry_points={
+        'console_scripts': [
+            'vesseg=segment:main',
+        ],
+    },
 )
