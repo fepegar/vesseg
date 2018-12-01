@@ -12,6 +12,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        segment=segment:segment
+        segment=segment:main
     ''',
 )
