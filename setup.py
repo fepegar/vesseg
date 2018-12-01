@@ -6,12 +6,12 @@ setup(
     author='Fernando Perez-Garcia',
     author_email='fernando.perezgarcia.17@ucl.ac.uk',
     install_requires=[
+        'click',
         'tensorflow-gpu',
         'niftynet',
-        'click',
     ],
     entry_points='''
         [console_scripts]
-        segment=segment:main
+        vesseg=segment:main
     ''',
 )

@@ -1,37 +1,30 @@
 from pathlib import Path
-from shutil import rmtree
 from csv import DictWriter
 from subprocess import call
 from tempfile import mkdtemp
+from shutil import rmtree, copytree
 from configparser import ConfigParser
 
 import click
 
 this_dir = Path(__file__).parent
 config_template_path = this_dir / 'config_template.ini'
+networks_dir = this_dir / 'networks'
+network_import_string = 'networks.highres3dnet_smaller.HighRes3DNetSmaller'
 
-@click.command()
-@click.argument('input_path', type=click.Path(exists=True))
-@click.argument('output_path', type=click.Path())
-@click.option('--cleanup', default=False)
-@click.option('--verbose', default=True)
-def segment(input_path, output_path, cleanup, verbose):
-    """Segment DSA image"""
-    input_path = Path(input_path)
-    output_path = Path(output_path)
-    tempdir = get_tempdir(input_path)
-    if verbose:
-        click.echo(f'Directory "{tempdir}" created')
-    csv_path, ini_path = get_config_paths(tempdir)
-    download_weights()
-    make_csv(input_path, csv_path)
-    make_config(config_template_path, csv_path, output_path, ini_path)
-    infer(ini_path)
+niftynet_networks_dir = Path(
+    Path.home(), '.niftynet', 'niftynetext', 'network', 'networks')
 
-    if cleanup:
-        if verbose:
-            click.echo(f'Removing "{tempdir}"...')
-        rmtree(tempdir)
+niftynet_networks_dir.mkdir(parents=True, exist_ok=True)
+rmtree(niftynet_networks_dir)
+copytree(networks_dir, niftynet_networks_dir)
+
+vesseg_dir = Path.home() / 'vesseg'
+model_dir = vesseg_dir / 'model'
+WEIGHTS_URL = (
+    'https://github.com/fepegar/vesseg-models/'
+    'blob/master/models/model_scaling.tar.gz?raw=true'
+)
 
 
 def get_nifti_stem(path):
@@ -51,7 +44,9 @@ def get_config_paths(output_dir):
 
 
 def download_weights():
-    return
+    if not model_dir.is_dir():
+        from niftynet.utilities.download import download_and_decompress
+        download_and_decompress(WEIGHTS_URL, model_dir / 'models')
 
 
 def make_csv(input_path, csv_path):
@@ -63,13 +58,13 @@ def make_csv(input_path, csv_path):
         )
 
 
-def make_config(template_path, csv_path, output_path, ini_path):
+def make_config(template_path, csv_path, output_dir, ini_path):
     config = ConfigParser()
     config.read(template_path)
     config['DSA']['csv_file'] = str(csv_path)
-    config['SYSTEM']['model_dir'] = str(None)  # TODO
-    config['NETWORK']['name'] = str(None)  # TODO
-    config['INFERENCE']['save_seg_dir'] = str(output_path.parent)
+    config['SYSTEM']['model_dir'] = str(model_dir)
+    config['NETWORK']['name'] = network_import_string
+    config['INFERENCE']['save_seg_dir'] = str(output_dir)
     with open(ini_path, 'w') as configfile:
         config.write(configfile)
 
@@ -80,5 +75,20 @@ def infer(config_path):
         '-c', str(config_path),
         'inference',
     ]
+    print('Running NiftyNet command:')
     print(' '.join(command))
-    # call(command)
+    call(command)
+
+
+@click.command()
+@click.argument('input_path', type=click.Path(exists=True))
+@click.argument('output_path', type=click.Path())
+def main(input_path, output_path):
+    """Segment DSA image"""
+    input_path = Path(input_path).resolve()
+    output_path = Path(output_path).resolve()
+    csv_path, ini_path = get_config_paths(vesseg_dir)
+    download_weights()
+    make_csv(input_path, csv_path)
+    make_config(config_template_path, csv_path, vesseg_dir, ini_path)
+    infer(ini_path)
