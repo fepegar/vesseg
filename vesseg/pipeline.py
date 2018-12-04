@@ -16,6 +16,8 @@ NETWORK_IMPORT_STRING = (
     '.HighRes3DNetSmaller'
 )
 
+OUTPUT_SUFFIX = '_vesseg'
+
 
 class SegmentPipeline:
     def __init__(self, input_path, output_path, repo_dir):
@@ -65,6 +67,7 @@ class SegmentPipeline:
         config['SYSTEM']['model_dir'] = str(self.model_dir)
         config['NETWORK']['name'] = NETWORK_IMPORT_STRING
         config['INFERENCE']['save_seg_dir'] = str(self.vesseg_home_dir)
+        config['INFERENCE']['output_postfix'] = OUTPUT_SUFFIX
         with open(self.config_path, 'w') as configfile:
             config.write(configfile)
 
@@ -80,11 +83,26 @@ class SegmentPipeline:
         call(command)
 
 
+    def get_default_output_path(self):
+        default_output_path = (
+            self.vesseg_home_dir
+            / self.input_path.name.replace('.nii', f'{OUTPUT_SUFFIX}.nii')
+        )
+        return default_output_path
+
+
+    def postprocess(self):
+        default_output_path = self.get_default_output_path()
+        self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        default_output_path.rename(self.output_path)
+
+
     def run(self):
         self.download_weights()
         self.make_csv()
         self.make_config()
         self.infer()
+        self.postprocess()
 
 
 def get_nifti_stem(path):
