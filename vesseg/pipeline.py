@@ -4,6 +4,7 @@ from subprocess import call
 from shutil import rmtree, copytree
 from configparser import ConfigParser
 
+from.processing import remove_small_components
 
 WEIGHTS_URL = (
     'https://github.com/fepegar/vesseg-models/'
@@ -29,6 +30,7 @@ class SegmentPipeline:
         self.config_template_path = repo_dir / 'config_template.ini'
         self.csv_path = self.vesseg_home_dir / 'input.csv'
         self.config_path = self.vesseg_home_dir / 'config.ini'
+        self.remove_small_components = True
 
 
     def copy_networks_dir(self, repo_dir):
@@ -95,6 +97,8 @@ class SegmentPipeline:
         default_output_path = self.get_default_output_path()
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
         default_output_path.rename(self.output_path)
+        if self.remove_small_components:
+            remove_small_components(self.output_path)
 
 
     def run(self):

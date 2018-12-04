@@ -9,6 +9,7 @@ setup(
         'click',
         'tensorflow-gpu',
         'niftynet',
+        'SimpleITK',
     ],
     entry_points={
         'console_scripts': [
