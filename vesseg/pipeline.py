@@ -34,8 +34,7 @@ class SegmentPipeline:
         niftynet_home_dir = Path.home() / 'niftynet'
         niftynet_networks_dir = Path(
             niftynet_home_dir,
-            'niftynetext',
-            'network',
+            'extensions',
             'vesseg_networks',
         )
         niftynet_networks_dir.mkdir(parents=True, exist_ok=True)
