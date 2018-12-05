@@ -8,6 +8,8 @@ Brain vessel segmentation from digital subtraction angiography (DSA) using a 3D 
 ### GPU support
 This package uses [NiftyNet](http://www.niftynet.io/), which is built on top of [TensorFlow](https://www.tensorflow.org/), so first of all you need to follow the [instructions to setup your NVIDIA GPU](https://www.tensorflow.org/install/gpu).
 
+While it is possible to perform a segmentation without a GPU, inference of one large volume (512 × 512 × 394 voxels) using the default parameters takes one hour using CPU only and around 90 seconds using a GPU.
+
 ### `vesseg` package
 ```shell
 $ pip install git+https://github.com/fepegar/vesseg
