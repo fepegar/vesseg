@@ -18,15 +18,15 @@ While it is possible to perform a segmentation without a GPU, inference of one l
 Using [`conda`](https://conda.io/docs/) is recommended:
 
 ```shell
-$ conda create -n vesseg python=3.6 -y  # tensorflow doesn't support python 3.7 yet
-$ conda activate vesseg
-(vesseg) $ git clone https://github.com/fepegar/vesseg.git --depth 1
-(vesseg) $ pip install --editable ./vesseg
+$ conda create -n "vesseg" python=3.6 -y  # tensorflow doesn't support python 3.7 yet
+$ conda activate "vesseg"
+(vesseg) $ git clone "https://github.com/fepegar/vesseg.git" --depth 1
+(vesseg) $ pip install --editable "./vesseg"
 ```
 
 ## Usage
 
-```shell
+```
 $ conda activate vesseg
 (vesseg) $ vesseg --help
 Usage: vesseg [OPTIONS] INPUT_PATH OUTPUT_PATH
