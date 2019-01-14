@@ -1,7 +1,7 @@
 import SimpleITK as sitk
 
 
-def remove_small_components(input_path, output_path=None):
+def keep_largest_component(input_path, output_path=None):
     if output_path is None:
         output_path = input_path
     image = sitk.ReadImage(str(input_path))
