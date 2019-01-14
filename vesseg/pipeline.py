@@ -30,7 +30,6 @@ class SegmentPipeline:
         self.config_template_path = repo_dir / 'config_template.ini'
         self.csv_path = self.vesseg_home_dir / 'input.csv'
         self.config_path = self.vesseg_home_dir / 'config.ini'
-        self.keep_largest_component = True
 
 
     def copy_networks_dir(self, repo_dir):
@@ -83,6 +82,9 @@ class SegmentPipeline:
         print('Running NiftyNet command:')
         print(' '.join(command))
         call(command)
+        default_output_path = self.get_default_output_path()
+        self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        default_output_path.rename(self.output_path)
 
 
     def get_default_output_path(self):
@@ -93,20 +95,11 @@ class SegmentPipeline:
         return default_output_path
 
 
-    def postprocess(self):
-        default_output_path = self.get_default_output_path()
-        self.output_path.parent.mkdir(parents=True, exist_ok=True)
-        default_output_path.rename(self.output_path)
-        if self.keep_largest_component:
-            keep_largest_component(self.output_path)
-
-
     def run(self):
         self.download_weights()
         self.make_csv()
         self.make_config()
         self.infer()
-        self.postprocess()
 
 
 def get_nifti_stem(path):
