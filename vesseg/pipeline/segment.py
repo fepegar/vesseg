@@ -4,7 +4,7 @@ from subprocess import call
 from shutil import rmtree, copytree
 from configparser import ConfigParser
 
-from.processing import keep_largest_component
+from ..processing.image import keep_largest_component
 
 WEIGHTS_URL = (
     'https://github.com/fepegar/vesseg-models/'

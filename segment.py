@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 
-from vesseg import SegmentPipeline
+from vesseg.pipeline import SegmentPipeline
 
 
 @click.command()
