@@ -26,16 +26,8 @@ $ conda activate "vesseg"
 
 ## Usage
 
-```
+```shell
 $ conda activate vesseg
-(vesseg) $ vesseg --help
-Usage: vesseg [OPTIONS] INPUT_PATH OUTPUT_PATH
-
-  Segment brain vessels in DSA image
-
-Options:
-  --help  Show this message and exit.
-
 (vesseg) $ vesseg dsa_image.nii.gz dsa_vessels_seg.nii.gz
 (vesseg) $ bin2mesh dsa_vessels_seg.nii.gz dsa_vessels_mesh.vtp
 ```
