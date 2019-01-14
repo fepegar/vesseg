@@ -1,9 +1,4 @@
 from pathlib import Path
-from csv import DictWriter
-from subprocess import call
-from tempfile import mkdtemp
-from shutil import rmtree, copytree
-from configparser import ConfigParser
 
 import click
 
