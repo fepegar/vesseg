@@ -35,6 +35,9 @@ Usage: vesseg [OPTIONS] INPUT_PATH OUTPUT_PATH
 
 Options:
   --help  Show this message and exit.
+
+(vesseg) $ vesseg dsa_image.nii.gz dsa_vessels_seg.nii.gz
+(vesseg) $ bin2mesh dsa_vessels_seg.nii.gz dsa_vessels_mesh.vtp
 ```
 
 Tested on Linux and macOS.
