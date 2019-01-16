@@ -11,10 +11,12 @@ setup(
         'niftynet',
         'SimpleITK',
         'vtk',
+        'tqdm',
     ],
     entry_points={
         'console_scripts': [
             'vesseg=segment:main',
+            'segmerge=merge_segs:main',
             'bin2mesh=bin2mesh:main',
         ],
     },
