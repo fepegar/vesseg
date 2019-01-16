@@ -4,7 +4,11 @@ from subprocess import call
 from shutil import rmtree, copytree
 from configparser import ConfigParser
 
-from ..processing.image import keep_largest_component
+from ..processing.image import (
+    keep_largest_component,
+    to_uchar,
+    extract_foreground,
+)
 
 WEIGHTS_URL = (
     'https://github.com/fepegar/vesseg-models/'
@@ -21,7 +25,11 @@ OUTPUT_SUFFIX = '_vesseg'
 
 
 class SegmentPipeline:
-    def __init__(self, input_path, output_path, repo_dir):
+    def __init__(self,
+                 input_path,
+                 output_path,
+                 repo_dir,
+                 output_probability=False):
         self.input_path = Path(input_path).resolve()
         self.output_path = Path(output_path).resolve()
         self.copy_networks_dir(repo_dir)
@@ -30,6 +38,7 @@ class SegmentPipeline:
         self.config_template_path = repo_dir / 'config_template.ini'
         self.csv_path = self.vesseg_home_dir / 'input.csv'
         self.config_path = self.vesseg_home_dir / 'config.ini'
+        self.output_probability = output_probability
 
 
     def copy_networks_dir(self, repo_dir):
@@ -69,6 +78,8 @@ class SegmentPipeline:
         config['NETWORK']['name'] = NETWORK_IMPORT_STRING
         config['INFERENCE']['save_seg_dir'] = str(self.vesseg_home_dir)
         config['INFERENCE']['output_postfix'] = OUTPUT_SUFFIX
+        if self.output_probability:
+            config['SEGMENTATION']['output_prob'] = 'True'
         with open(self.config_path, 'w') as configfile:
             config.write(configfile)
 
@@ -84,14 +95,19 @@ class SegmentPipeline:
         call(command)
         default_output_path = self.get_default_output_path()
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        print(f'Saving result to {self.output_path}...')
         default_output_path.rename(self.output_path)
+        if self.output_probability:
+            print('Extracting foreground probability...')
+            extract_foreground(self.output_path)
+        else:
+            print('Transforming to unsigned integer 8...')
+            to_uchar(self.output_path)
 
 
     def get_default_output_path(self):
-        default_output_path = (
-            self.vesseg_home_dir
-            / self.input_path.name.replace('.nii', f'{OUTPUT_SUFFIX}.nii')
-        )
+        filename = self.input_path.name.replace('.nii', f'{OUTPUT_SUFFIX}.nii')
+        default_output_path = self.vesseg_home_dir / filename
         return default_output_path
 
 
