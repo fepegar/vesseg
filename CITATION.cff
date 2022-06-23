@@ -13,5 +13,5 @@ authors:
   - family-names: "Ourselin"
     given-names: "Sébastien"
     orcid: https://orcid.org/0000-0002-5694-5340
-title: "Vesseg"
+title: "Vesseg: automatic brain vessel segmentation using 3D convolutional neural networks"
 repository-code: "https://github.com/fepegar/vesseg"
